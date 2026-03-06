@@ -323,7 +323,7 @@
 		const totalRecordsEl = byId('totalRecords');
 		const totalStudentsEl = byId('totalStudents');
 		const totalSubjectsEl = byId('totalSubjects');
-		const searchInput = byId('searchInput');
+		// search inputs for various tables use class "table-search" and data-table attribute
 
 		function renderStats() {
 			const students = read(STUDENTS_KEY);
@@ -334,20 +334,22 @@
 			if (totalSubjectsEl) totalSubjectsEl.textContent = subjects.length;
 		}
 
-		function initSearch() {
-			if (!searchInput) return;
-			searchInput.addEventListener('input', () => {
-				const q = searchInput.value.toLowerCase().trim();
-				document.querySelectorAll('#scoresTable tbody tr').forEach(tr => {
-					if (tr.classList.contains('empty-row')) return;
-					const text = tr.textContent.toLowerCase();
-					tr.style.display = text.includes(q) ? '' : 'none';
+		function initTableSearch() {
+			document.querySelectorAll('.table-search').forEach(input => {
+				const tableSelector = input.dataset.table || '#scoresTable';
+				input.addEventListener('input', () => {
+					const q = input.value.toLowerCase().trim();
+					document.querySelectorAll(tableSelector + ' tbody tr').forEach(tr => {
+						if (tr.classList.contains('empty-row')) return;
+						const text = tr.textContent.toLowerCase();
+						tr.style.display = text.includes(q) ? '' : 'none';
+					});
 				});
 			});
 		}
 
 		renderStats();
-		initSearch();
+		initTableSearch();
 
 		window.addEventListener('storage', (e) => {
 			if ([STUDENTS_KEY, SUBJECTS_KEY, RECORDS_KEY].includes(e.key)) renderStats();
@@ -375,7 +377,7 @@
 		if (byId('addStudentForm')) initStudentsPage();
 		if (byId('addSubjectForm')) initSubjectsPage();
 		if (byId('recordScoreForm') || byId('uploadPaperForm') || document.querySelectorAll('#scoresTable').length) initRecordAndUploadPages();
-		if (byId('totalRecords')) initDashboardPage();
+		if (byId('totalRecords') || document.querySelector('.table-search')) initDashboardPage();
 	});
 
 })();
