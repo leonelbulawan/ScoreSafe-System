@@ -69,6 +69,42 @@
 				});
 			}
 
+			// Logout button handler (show confirmation modal)
+			function showSignOutModal(callback) {
+				if (document.querySelector('.modal-overlay')) return;
+				const overlay = document.createElement('div');
+				overlay.className = 'modal-overlay';
+				overlay.innerHTML = `
+					<div class="modal" role="dialog" aria-modal="true" aria-labelledby="signout-title">
+						<h3 id="signout-title">Sign out</h3>
+						<p>Are you sure you want to sign out?</p>
+						<div class="modal-buttons">
+							<button class="btn outline btn-cancel"><i class="fas fa-times"></i> Cancel</button>
+							<button class="btn btn-confirm"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+						</div>
+					</div>
+				`;
+				document.body.appendChild(overlay);
+				const cancelBtn = overlay.querySelector('.btn-cancel');
+				const confirmBtn = overlay.querySelector('.btn-confirm');
+				function cleanup() { overlay.remove(); }
+				cancelBtn.focus();
+				cancelBtn.addEventListener('click', (ev) => { ev.preventDefault(); cleanup(); });
+				overlay.addEventListener('click', (ev) => { if (ev.target === overlay) cleanup(); });
+				confirmBtn.addEventListener('click', (ev) => { ev.preventDefault(); cleanup(); if (typeof callback === 'function') callback(); });
+				overlay.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') cleanup(); });
+			}
+
+			document.querySelectorAll('.logout-btn').forEach(btn => {
+				btn.addEventListener('click', (e) => {
+					e.preventDefault();
+					showSignOutModal(() => {
+						localStorage.removeItem('authToken');
+						location.href = '../signin.html';
+					});
+				});
+			});
+
 			renderStudentDashboard();
 			renderRecordsPage();
 			// simple search handling

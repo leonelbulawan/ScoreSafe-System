@@ -169,6 +169,7 @@
 
 		function renderScoresTables() {
 			const records = read(RECORDS_KEY);
+			// `totalItemsInput` is now a user-editable numeric field; do not overwrite its value here.
 			const students = read(STUDENTS_KEY);
 			document.querySelectorAll('#scoresTable').forEach(table => {
 				const tbody = table.querySelector('tbody');
@@ -185,7 +186,8 @@
 					const student = students.find(s => s.email === r.studentEmail);
 					const studentName = student ? student.name : r.studentEmail;
 					const paperLink = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${r.score || ''}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
+					const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${totalItemsDisplay}</td><td>${r.score || ''}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
 					tbody.appendChild(tr);
 				});
 			});
@@ -198,9 +200,11 @@
 				const subject = byId('subjectSelect').value;
 				const category = byId('categorySelect').value;
 				const score = byId('score').value;
+				const totalItemsVal = (byId('totalItemsInput') && byId('totalItemsInput').value) ? byId('totalItemsInput').value.trim() : '';
 				const file = byId('paperFile').files[0];
 				if (!studentEmail || !subject || !category) return;
 				const record = { studentEmail, subject, category, score: Number(score), date: Date.now() };
+				if (totalItemsVal !== '') record.totalItems = Number(totalItemsVal);
 				if (file) {
 					const reader = new FileReader();
 					reader.onload = function() {
@@ -264,11 +268,13 @@
 				const tds = tr.querySelectorAll('td');
 				const studentTd = tds[0];
 				const subjectTd = tds[1];
-				const scoreTd = tds[2];
-				const categoryTd = tds[4];
-				const actionsTd = tds[6];
+				const totalItemsTd = tds[2];
+				const scoreTd = tds[3];
+				const categoryTd = tds[5];
+				const actionsTd = tds[7];
 				const originalStudent = records[realIdx].studentEmail;
 				const originalSubject = records[realIdx].subject;
+				const originalTotalItems = records[realIdx].totalItems || '';
 				const originalScore = records[realIdx].score || '';
 				const originalCategory = records[realIdx].category;
 				const students = read(STUDENTS_KEY);
@@ -285,6 +291,7 @@
 				subjectSelect += '</select>';
 				studentTd.innerHTML = studentSelect;
 				subjectTd.innerHTML = subjectSelect;
+				totalItemsTd.innerHTML = `<input type="number" value="${originalTotalItems}" style="width: 80px;">`;
 				scoreTd.innerHTML = `<input type="number" value="${originalScore}" style="width: 60px;">`;
 				categoryTd.innerHTML = `<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;"><option value="Performance" ${originalCategory === 'Performance' ? 'selected' : ''}>Performance</option><option value="Activity" ${originalCategory === 'Activity' ? 'selected' : ''}>Activity</option><option value="Quiz" ${originalCategory === 'Quiz' ? 'selected' : ''}>Quiz</option><option value="Recitation" ${originalCategory === 'Recitation' ? 'selected' : ''}>Recitation</option><option value="Examination" ${originalCategory === 'Examination' ? 'selected' : ''}>Examination</option></select>`;
 				actionsTd.innerHTML = `<button class="btn" data-idx="${idx}" data-action="save-edit">Save</button> <button class="btn outline" data-idx="${idx}" data-action="cancel-edit">Cancel</button>`;
@@ -293,10 +300,14 @@
 				const tds = tr.querySelectorAll('td');
 				const studentSelect = tds[0].querySelector('select');
 				const subjectSelect = tds[1].querySelector('select');
-				const scoreInput = tds[2].querySelector('input');
-				const categorySelect = tds[4].querySelector('select');
+				const totalItemsInput = tds[2].querySelector('input');
+				const scoreInput = tds[3].querySelector('input');
+				const categorySelect = tds[5].querySelector('select');
 				records[realIdx].studentEmail = studentSelect.value;
 				records[realIdx].subject = subjectSelect.value;
+				const totalItemsValEdit = totalItemsInput && totalItemsInput.value ? totalItemsInput.value.trim() : '';
+				if (totalItemsValEdit !== '') records[realIdx].totalItems = Number(totalItemsValEdit);
+				else delete records[realIdx].totalItems;
 				records[realIdx].score = Number(scoreInput.value);
 				records[realIdx].category = categorySelect.value;
 				write(RECORDS_KEY, records);
@@ -372,6 +383,47 @@
 				nav.classList.toggle('active');
 			});
 		}
+
+		// Logout handlers: show confirmation modal, then sign out
+		function showSignOutModal(callback) {
+			// prevent stacking multiple overlays
+			if (document.querySelector('.modal-overlay')) return;
+			const overlay = document.createElement('div');
+			overlay.className = 'modal-overlay';
+			overlay.innerHTML = `
+				<div class="modal" role="dialog" aria-modal="true" aria-labelledby="signout-title">
+					<h3 id="signout-title">Sign out</h3>
+					<p>Are you sure you want to sign out?</p>
+					<div class="modal-buttons">
+						<button class="btn outline btn-cancel"><i class="fas fa-times"></i> Cancel</button>
+						<button class="btn btn-confirm"><i class="fas fa-sign-out-alt"></i> Sign out</button>
+					</div>
+				</div>
+			`;
+			document.body.appendChild(overlay);
+			const cancelBtn = overlay.querySelector('.btn-cancel');
+			const confirmBtn = overlay.querySelector('.btn-confirm');
+			function cleanup() { overlay.remove(); }
+			// focus management
+			cancelBtn.focus();
+			cancelBtn.addEventListener('click', (ev) => { ev.preventDefault(); cleanup(); });
+			overlay.addEventListener('click', (ev) => { if (ev.target === overlay) cleanup(); });
+			confirmBtn.addEventListener('click', (ev) => { ev.preventDefault(); cleanup(); if (typeof callback === 'function') callback(); });
+			// keyboard handling
+			overlay.addEventListener('keydown', (ev) => {
+				if (ev.key === 'Escape') { cleanup(); }
+			});
+		}
+
+		document.querySelectorAll('.logout-btn').forEach(btn => {
+			btn.addEventListener('click', (e) => {
+				e.preventDefault();
+				showSignOutModal(() => {
+					localStorage.removeItem('authToken');
+					location.href = '../signin.html';
+				});
+			});
+		});
 
 		// Students page
 		if (byId('addStudentForm')) initStudentsPage();

@@ -61,6 +61,64 @@ body{
   position: relative;
 }
 
+/* Header actions (right side) */
+.header-actions{
+  position: absolute;
+  right: 20px;
+  top: 0;
+  bottom: 0;
+  display:flex;
+  gap:12px;
+  align-items:center;
+  padding: 0;
+}
+
+@media (max-width:768px){
+  .header-actions{ display:none; }
+}
+
+/* Mobile-only elements inside the nav (shown when hamburger opens) */
+.mobile-only{ display:none; }
+@media (max-width:768px){
+  .mobile-only{ display:inline-flex; align-items:center; gap:8px; }
+  nav a.mobile-only{ margin-left:0; font-size:16px; }
+}
+
+/* Make logout button match nav link color and behavior */
+.header-actions .btn,
+.header-actions a {
+  background: transparent;
+  color: rgba(255,255,255,0.8);
+  border: none;
+  padding: 8px 10px;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  transition: var(--transition);
+  position: relative;
+  top: 2px; /* nudge the whole control slightly down */
+}
+
+/* move only the logout label text slightly up; keep the icon vertically centered */
+.header-actions .logout-label {
+  display: inline-block;
+  position: relative;
+  top: -2px; /* raise logout text slightly */
+}
+
+.header-actions .btn:hover,
+.header-actions a:hover {
+  color: white;
+  transform: translateY(-1px);
+}
+
+.header-actions .btn .fas,
+.header-actions a .fas {
+  color: inherit;
+}
+
 .logo{
   position:absolute; /* Keep logo on the left */
   left:20px;
@@ -362,18 +420,18 @@ tbody tr:last-child td {
 input, select{
   width: 100%;
   padding: 12px 16px;
-  border-radius: var(--border-radius);
-  border: 1px solid var(--border-color);
-  font-size: 14px;
+  border-radius: 10px;
+  border: 1px solid #e6e9ee;
+  font-size: 15px;
   font-family: inherit;
   transition: var(--transition);
-  background: var(--card-background);
+  background: #fff;
 }
 
 input:focus, select:focus{
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.1);
+  box-shadow: 0 6px 18px rgba(128,0,0,0.08);
 }
 
 input[type="file"]{
@@ -406,43 +464,62 @@ label{
   justify-content:center;
   min-height: calc(100vh - 140px);
   padding: 40px 20px;
+  background: linear-gradient(180deg, rgba(248,250,252,0.6), rgba(248,250,252,0.6));
 }
 .auth-card{
   width:100%;
-  max-width:420px;
-  background: var(--card-background);
-  border-radius: 12px;
-  padding: 28px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-  border:1px solid var(--border-color);
+  max-width:460px;
+  background: linear-gradient(180deg, #ffffff, #fbfbfd);
+  border-radius: 14px;
+  padding: 36px;
+  box-shadow: 0 18px 40px rgba(10, 10, 10, 0.08), 0 6px 18px rgba(10,10,10,0.04);
+  border: 1px solid rgba(226,232,240,0.8);
 }
 .auth-header{
   text-align:center;
   margin-bottom: 18px;
 }
 .auth-header .logo-large{
-  font-size:28px;
+  font-size:30px;
   font-weight:800;
   color:var(--primary-color);
-  margin-bottom:6px;
+  margin-bottom:8px;
+  letter-spacing: -0.4px;
 }
 .auth-header p{
   color:#6b7280;
   font-size:14px;
+  margin:0 auto;
+  max-width:360px;
 }
 .btn-primary{
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
   width:100%;
-  background: var(--primary-color);
+  background: linear-gradient(90deg, var(--primary-color), #6f0000);
   color: white;
   border: none;
-  padding: 12px 16px;
+  padding: 14px 18px;
   border-radius: 10px;
   font-weight:700;
+  font-size:15px;
   cursor:pointer;
   transition: var(--transition);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
 }
-.btn-primary:hover{ transform: translateY(-1px); filter: brightness(0.95); }
+.btn-primary:hover{
+  background: linear-gradient(90deg, var(--accent-color), #b3001a);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+}
+
+/* Lower only the icon inside auth buttons (Sign In / Sign Up) */
+.auth-container .btn-primary .fas{
+  position: relative;
+  top: 2px; /* move icon down slightly without affecting text */
+}
 .btn-secondary{
   display:inline-block;
   width:100%;
@@ -470,7 +547,7 @@ label{
 }
 
 @media (max-width:600px){
-  .auth-container.signin{ padding-top: 60px; }
+  .auth-container.signin{ padding-top: 120px; }
 }
 
 @media (max-width:600px){
@@ -528,6 +605,15 @@ button.btn.outline:hover {
   background: var(--primary-color);
   color: #fff;
 }
+
+/* Compact icon-only button style */
+.btn.icon {
+  padding: 8px 10px;
+  width: auto;
+  min-width: 40px;
+  justify-content: center;
+}
+.btn.icon .fas { font-size: 14px; }
 
 /* ========================
    Footer
@@ -692,6 +778,25 @@ button.btn.outline:hover {
   background: var(--accent-color);
 }
 
+/* Ensure small steppers/arrows are visible on number inputs */
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: inner-spin-button;
+  opacity: 0.9;
+  margin: 0 3px;
+}
+
+/* Slightly reduce the size of the spinner so it looks subtle */
+.form-group input[type="number"]::-webkit-outer-spin-button,
+.form-group input[type="number"]::-webkit-inner-spin-button {
+  width: 18px;
+}
+
+/* For Firefox, allow native number input controls (no override) */
+input[type="number"] {
+  -moz-appearance: number-input;
+}
+
 /* Remove colored background for header search inputs (and override autofill) */
 .table-header .search-container input,
 .search-container input {
@@ -712,3 +817,32 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: inherit !important;
   background-color: transparent !important;
 }
+
+/* ========================
+   Modal (Sign out confirmation)
+======================== */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background: rgba(0,0,0,0.45);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:2000;
+}
+.modal{
+  width:100%;
+  max-width:460px;
+  background: linear-gradient(180deg, #ffffff, #fbfbfd);
+  border-radius: 14px;
+  padding: 22px 24px;
+  box-shadow: 0 22px 60px rgba(2,6,23,0.28);
+  text-align: left;
+}
+.modal h3{ margin:0 0 6px 0; font-size:20px; color:var(--text-color); font-weight:700; }
+.modal p{ margin:0 0 18px 0; color:#6b7280; font-size:14px; }
+.modal-buttons{ display:flex; gap:12px; justify-content:flex-end; align-items:center; }
+.modal .btn-cancel{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; }
+.modal .btn-confirm{ display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:10px; }
+.modal .fas{ display:inline-block; width:18px; text-align:center; }
+.modal .fas{ display:inline-block; width:18px; text-align:center; }
