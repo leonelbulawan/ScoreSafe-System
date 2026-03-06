@@ -273,12 +273,12 @@
 				const originalCategory = records[realIdx].category;
 				const students = read(STUDENTS_KEY);
 				const subjects = read(SUBJECTS_KEY);
-				let studentSelect = '<select style="width: 150px;">';
+				let studentSelect = '<select style="width: 150px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;">';
 				students.forEach(s => {
-					studentSelect += `<option value="${s.email}" ${s.email === originalStudent ? 'selected' : ''}>${s.email}</option>`;
+					studentSelect += `<option value="${s.email}" ${s.email === originalStudent ? 'selected' : ''}>${s.name}</option>`;
 				});
 				studentSelect += '</select>';
-				let subjectSelect = '<select style="width: 100px;">';
+				let subjectSelect = '<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;">';
 				subjects.forEach(s => {
 					subjectSelect += `<option value="${s}" ${s === originalSubject ? 'selected' : ''}>${s}</option>`;
 				});
@@ -286,7 +286,7 @@
 				studentTd.innerHTML = studentSelect;
 				subjectTd.innerHTML = subjectSelect;
 				scoreTd.innerHTML = `<input type="number" value="${originalScore}" style="width: 60px;">`;
-				categoryTd.innerHTML = `<select style="width: 100px;"><option value="Performance" ${originalCategory === 'Performance' ? 'selected' : ''}>Performance</option><option value="Activity" ${originalCategory === 'Activity' ? 'selected' : ''}>Activity</option><option value="Quiz" ${originalCategory === 'Quiz' ? 'selected' : ''}>Quiz</option><option value="Recitation" ${originalCategory === 'Recitation' ? 'selected' : ''}>Recitation</option><option value="Examination" ${originalCategory === 'Examination' ? 'selected' : ''}>Examination</option></select>`;
+				categoryTd.innerHTML = `<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;"><option value="Performance" ${originalCategory === 'Performance' ? 'selected' : ''}>Performance</option><option value="Activity" ${originalCategory === 'Activity' ? 'selected' : ''}>Activity</option><option value="Quiz" ${originalCategory === 'Quiz' ? 'selected' : ''}>Quiz</option><option value="Recitation" ${originalCategory === 'Recitation' ? 'selected' : ''}>Recitation</option><option value="Examination" ${originalCategory === 'Examination' ? 'selected' : ''}>Examination</option></select>`;
 				actionsTd.innerHTML = `<button class="btn" data-idx="${idx}" data-action="save-edit">Save</button> <button class="btn outline" data-idx="${idx}" data-action="cancel-edit">Cancel</button>`;
 			} else if (btn.dataset.action === 'save-edit') {
 				const tr = btn.closest('tr');

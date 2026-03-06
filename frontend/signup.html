@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ScoreSafe | Sign up</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <main class="container">
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="logo-large">Create an account</div>
+          <p>Register as a teacher or student to start using ScoreSafe</p>
+        </div>
+
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="name">Full name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="At least 8 characters" required>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Confirm password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password" required>
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select id="role" name="role">
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-primary">Create Account</button>
+        </form>
+
+        <div class="form-footer">
+          <p>Already have an account? <a href="signin.html">Sign in</a></p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+</body>
+</html>
