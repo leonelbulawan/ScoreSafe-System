@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const multer = require('multer');
 const scoreRoutes = require('./routes/scores');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -18,14 +19,17 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
-app.use('/uploads', express.static('uploads')); 
+app.use('/uploads', express.static('uploads'));
 
 app.use('/api/scores', (req, res, next) => {
     req.upload = upload; 
     next();
 }, scoreRoutes);
+
+app.use('/api/auth', authRoutes);
 
 app.listen(3000, () => {
   console.log('Server running on http://localhost:3000');
