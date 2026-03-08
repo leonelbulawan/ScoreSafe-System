@@ -11,13 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg = document.getElementById('loginMsg');
       if (msg) msg.textContent = '';
 
-      const show = (text, cls) => {
-        if (msg) { msg.textContent = text; msg.className = cls; }
-        else { alert(text); }
-      };
-
-      if (!email || !password) { show('Please fill in all fields.', 'error-msg'); return; }
-      if (email && !/^\S+@\S+\.\S+$/.test(email)) { show('Please enter a valid email.', 'error-msg'); return; }
+      // ...existing code...
+      if (!email || !password) { return; }
+      if (email && !/^\S+@\S+\.\S+$/.test(email)) { return; }
 
       try {
         const res = await fetch('/api/auth/login', {
@@ -26,26 +22,16 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ email, password })
         });
 
-        if (!res.ok) {
-          const err = await res.json().catch(()=>({message:'Login failed'}));
-          show(err.message || 'Login failed', 'error-msg');
-          return;
-        }
+        if (!res.ok) { return; }
 
         const data = await res.json().catch(()=>({}));
-        // store token if provided
         if (data.token) localStorage.setItem('authToken', data.token);
-        show('Signed in successfully', 'success-msg');
-        // redirect based on returned role when available
         setTimeout(()=>{
           const userRole = data.role || 'teacher';
           if (userRole === 'teacher') location.href = 'teacher/dashboard.html';
           else location.href = 'student/dashboard.html';
         },700);
-
-      } catch (err) {
-        show('Unable to reach server', 'error-msg');
-      }
+      } catch (err) { }
     });
 
       // No password toggle logic needed; icons are static
@@ -62,15 +48,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const msg = document.getElementById('registerMsg');
       if (msg) msg.textContent='';
 
-      const show = (text, cls) => {
-        if (msg) { msg.textContent = text; msg.className = cls; }
-        else { alert(text); }
-      };
-
-      if (!name || !email || !password) { show('Please fill in all fields.', 'error-msg'); return; }
-      if (email && !/^\S+@\S+\.\S+$/.test(email)) { show('Please enter a valid email.', 'error-msg'); return; }
-      if (password.length < 8) { show('Password must be at least 8 characters.', 'error-msg'); return; }
-      if (password !== confirmPassword) { show('Passwords do not match.', 'error-msg'); return; }
+      // ...existing code...
+      if (!name || !email || !password) { return; }
+      if (email && !/^\S+@\S+\.\S+$/.test(email)) { return; }
+      if (password.length < 8) { return; }
+      if (password !== confirmPassword) { return; }
 
       try {
         const res = await fetch('/api/auth/register', {
@@ -79,23 +61,15 @@ document.addEventListener('DOMContentLoaded', () => {
           body: JSON.stringify({ name, email, password, role })
         });
 
-        if (!res.ok) {
-          const err = await res.json().catch(()=>({message:'Registration failed'}));
-          show(err.message || 'Registration failed', 'error-msg');
-          return;
-        }
+        if (!res.ok) { return; }
 
         const data = await res.json().catch(()=>({}));
-        show('Account created — signing in...', 'success-msg');
         if (data.token) localStorage.setItem('authToken', data.token);
         setTimeout(()=>{
           if (role === 'teacher') location.href = 'teacher/dashboard.html';
           else location.href = 'student/dashboard.html';
         },900);
-
-      } catch (err) {
-        show('Unable to reach server', 'error-msg');
-      }
+      } catch (err) { }
     });
 
     // password visibility toggles for register
