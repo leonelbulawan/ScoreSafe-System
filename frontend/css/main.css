@@ -1,3 +1,34 @@
+/* Maroon color for search icons */
+.search-icon {
+  color: var(--primary-color) !important;
+}
+/* Style for search fields */
+.table-search,
+#studentSearchInput,
+#recordsSearch,
+input[type="text"].table-search,
+input[type="text"]#studentSearchInput,
+input[type="text"]#recordsSearch {
+  border: 4px solid var(--primary-color);
+  border-radius: 4px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.table-search:focus,
+#studentSearchInput:focus,
+#recordsSearch:focus {
+  border-color: var(--accent-color);
+}
+/* Make save button icon white in profile pages */
+.profile-actions .btn .fa-save.icon-label {
+  color: #fff;
+}
+/* Icon label style for form fields */
+.icon-label {
+  margin-right: 8px;
+  color: var(--primary-color);
+}
 /* ========================
    Global
 ======================== */
@@ -147,6 +178,15 @@ nav a{
   gap: 8px;
 }
 
+nav a .icon-label, nav a .fas, nav a .fa {
+  color: rgba(255, 255, 255, 0.95) !important;
+  transition: color 0.2s;
+}
+
+nav a.active .icon-label, nav a.active .fas, nav a.active .fa {
+  color: var(--accent-color) !important;
+}
+
 nav a:hover{
   color: white;
   transform: translateY(-1px);
@@ -154,8 +194,10 @@ nav a:hover{
 
 nav a.active{
   color: var(--accent-color);
-  border-bottom: 2px solid var(--accent-color);
-  padding-bottom: 4px;
+  border-bottom: 3px solid var(--accent-color);
+  padding-bottom: 2px;
+  background: transparent;
+  box-shadow: none;
 }
 
 /* Hamburger for mobile */
@@ -320,21 +362,47 @@ nav.active a{
 
 .search-container {
   position: relative;
-  max-width: 280px;
-}
-
-.search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #6b7280;
-  font-size: 14px;
-  pointer-events: none;
+  width: 100%;
+  max-width: none;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  justify-content: flex-start;
+  margin-left: 0;
 }
 
 .search-container input {
-  padding-left: 35px;
+  flex: 1 1 auto;
+  padding-left: 16px;
+  border-radius: 4px;
+  border-right: 4px solid var(--primary-color);
+  margin-right: 12px; /* add space between input and button */
+}
+
+.search-btn {
+  background: var(--primary-color);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 12px 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  height: 44px;
+  min-height: 44px;
+  transition: background 0.2s;
+  margin-left: 0;
+  margin-right: 0;
+}
+.search-btn:hover {
+  background: var(--accent-color);
+  border: none;
+}
+.search-btn .search-icon {
+  position: static;
+  color: #fff !important;
+  font-size: 16px;
+  pointer-events: none;
 }
 
 .table-wrapper{
@@ -459,12 +527,20 @@ label{
    Auth (Login / Register)
 ======================== */
 .auth-container{
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   min-height: calc(100vh - 140px);
   padding: 40px 20px;
   background: linear-gradient(180deg, rgba(248,250,252,0.6), rgba(248,250,252,0.6));
+}
+
+.table-header .search-container {
+  justify-content: flex-start;
+  margin-left: 24px;
+  width: 320px;
+  max-width: none;
 }
 .auth-card{
   width:100%;
@@ -508,6 +584,13 @@ label{
   cursor:pointer;
   transition: var(--transition);
   box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+.btn-primary .icon-label,
+.btn-primary .fa,
+.btn-primary .fas {
+  color: #fff !important;
+}
 }
 .btn-primary:hover{
   background: linear-gradient(90deg, var(--accent-color), #b3001a);
@@ -717,6 +800,26 @@ button.btn.outline:hover {
   margin-bottom: 20px;
 }
 
+/* ========================
+   Profile Card
+======================== */
+.profile-card { display:flex; gap:28px; align-items:flex-start; flex-wrap:wrap; }
+.profile-avatar { flex: 0 0 220px; text-align:center; }
+.avatar-wrapper { width:200px; height:200px; margin:auto; border-radius:14px; overflow:hidden; background:#f3f4f6; display:flex; align-items:center; justify-content:center; position:relative; border:4px solid var(--primary-color); box-shadow: 0 6px 18px rgba(128,0,0,0.12); }
+.avatar-wrapper img{ width:100%; height:100%; object-fit:cover; display:block; }
+.avatar-overlay { position:absolute; right:8px; bottom:8px; background: rgba(0,0,0,0.5); color:#fff; padding:8px 10px; border-radius:999px; cursor:pointer; display:flex; align-items:center; gap:8px; font-size:14px; }
+.avatar-overlay .fas{ font-size:14px; }
+.profile-info { flex:1; min-width:320px; }
+.profile-actions { display:flex; gap:12px; margin-top:8px; }
+.profile-msg { margin-top:12px; font-weight:700; display:none; }
+.profile-msg.success { color: #0f766e; display:block; }
+.profile-msg.error { color: #b91c1c; display:block; }
+
+@media (max-width:640px){
+  .profile-card{ flex-direction:column; align-items:center; }
+  .profile-avatar{ order: -1; }
+}
+
 .form-group label {
   display: block;
   margin-bottom: 8px;
@@ -829,7 +932,7 @@ select:-webkit-autofill:focus {
   align-items:center;
   justify-content:center;
   z-index:2000;
-}
+  margin-left: 48px;
 .modal{
   width:100%;
   max-width:460px;

@@ -186,14 +186,9 @@
 					const student = students.find(s => s.email === r.studentEmail);
 					const studentName = student ? student.name : r.studentEmail;
 					const paperLink = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-					// display score, optionally with total items as "score/total"
-					let scoreDisplay = '';
-					if (r.score !== undefined && r.score !== null) {
-						scoreDisplay = r.totalItems ? `${r.score}/${r.totalItems}` : `${r.score}`;
-					} else if (r.totalItems !== undefined && r.totalItems !== null) {
-						scoreDisplay = `/${r.totalItems}`;
-					}
-					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${scoreDisplay}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
+					const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
+					const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
 					tbody.appendChild(tr);
 				});
 			});
@@ -274,8 +269,8 @@
 				const tds = tr.querySelectorAll('td');
 				const studentTd = tds[0];
 				const subjectTd = tds[1];
-				const totalItemsTd = tds[2];
-				const scoreTd = tds[3];
+				const scoreTd = tds[2];
+				const totalItemsTd = tds[3];
 				const categoryTd = tds[5];
 				const actionsTd = tds[7];
 				const originalStudent = records[realIdx].studentEmail;
@@ -285,20 +280,20 @@
 				const originalCategory = records[realIdx].category;
 				const students = read(STUDENTS_KEY);
 				const subjects = read(SUBJECTS_KEY);
-				let studentSelect = '<select style="width: 150px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;">';
+				let studentSelect = '<select style="width: 150px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;>';
 				students.forEach(s => {
 					studentSelect += `<option value="${s.email}" ${s.email === originalStudent ? 'selected' : ''}>${s.name}</option>`;
 				});
 				studentSelect += '</select>';
-				let subjectSelect = '<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;">';
+				let subjectSelect = '<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;>';
 				subjects.forEach(s => {
 					subjectSelect += `<option value="${s}" ${s === originalSubject ? 'selected' : ''}>${s}</option>`;
 				});
 				subjectSelect += '</select>';
 				studentTd.innerHTML = studentSelect;
 				subjectTd.innerHTML = subjectSelect;
-				totalItemsTd.innerHTML = `<input type="number" value="${originalTotalItems}" style="width: 80px;">`;
 				scoreTd.innerHTML = `<input type="number" value="${originalScore}" style="width: 60px;">`;
+				totalItemsTd.innerHTML = `<input type="number" value="${originalTotalItems}" style="width: 80px;">`;
 				categoryTd.innerHTML = `<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;"><option value="Performance" ${originalCategory === 'Performance' ? 'selected' : ''}>Performance</option><option value="Activity" ${originalCategory === 'Activity' ? 'selected' : ''}>Activity</option><option value="Quiz" ${originalCategory === 'Quiz' ? 'selected' : ''}>Quiz</option><option value="Recitation" ${originalCategory === 'Recitation' ? 'selected' : ''}>Recitation</option><option value="Examination" ${originalCategory === 'Examination' ? 'selected' : ''}>Examination</option></select>`;
 				actionsTd.innerHTML = `<button class="btn" data-idx="${idx}" data-action="save-edit">Save</button> <button class="btn outline" data-idx="${idx}" data-action="cancel-edit">Cancel</button>`;
 			} else if (btn.dataset.action === 'save-edit') {
@@ -306,15 +301,15 @@
 				const tds = tr.querySelectorAll('td');
 				const studentSelect = tds[0].querySelector('select');
 				const subjectSelect = tds[1].querySelector('select');
-				const totalItemsInput = tds[2].querySelector('input');
-				const scoreInput = tds[3].querySelector('input');
+				const scoreInput = tds[2].querySelector('input');
+				const totalItemsInput = tds[3].querySelector('input');
 				const categorySelect = tds[5].querySelector('select');
 				records[realIdx].studentEmail = studentSelect.value;
 				records[realIdx].subject = subjectSelect.value;
 				const totalItemsValEdit = totalItemsInput && totalItemsInput.value ? totalItemsInput.value.trim() : '';
 				if (totalItemsValEdit !== '') records[realIdx].totalItems = Number(totalItemsValEdit);
 				else delete records[realIdx].totalItems;
-				records[realIdx].score = Number(scoreInput.value);
+				records[realIdx].score = scoreInput && scoreInput.value ? Number(scoreInput.value) : undefined;
 				records[realIdx].category = categorySelect.value;
 				write(RECORDS_KEY, records);
 				renderScoresTables();
@@ -450,35 +445,45 @@
 		if (!Object.keys(p).length) return;
 		if (byId('teacherFullName')) byId('teacherFullName').value = p.fullName || '';
 		if (byId('teacherEmail')) byId('teacherEmail').value = p.email || '';
-		// department/phone fields were removed from the form; ignore if absent
 		if (byId('teacherBio')) byId('teacherBio').value = p.bio || '';
-		if (p.avatarDataUrl && byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+		if (p.avatarDataUrl && byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar">`;
 	}
 
 	function saveProfile(dataUrl){
 		const obj = {
 			fullName: (byId('teacherFullName') && byId('teacherFullName').value) || '',
 			email: (byId('teacherEmail') && byId('teacherEmail').value) || '',
-			// department/phone removed from form
 			bio: (byId('teacherBio') && byId('teacherBio').value) || ''
 		};
+		const msgEl = byId('teacherProfileMsg');
+		// basic validation
+		if (!obj.fullName || !obj.email) {
+			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide your full name and email.'; }
+			return false;
+		}
+		if (obj.email && !/^\S+@\S+\.\S+$/.test(obj.email)){
+			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide a valid email address.'; }
+			return false;
+		}
 		if (dataUrl) obj.avatarDataUrl = dataUrl;
 		const existing = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
 		if (!obj.avatarDataUrl && existing.avatarDataUrl) obj.avatarDataUrl = existing.avatarDataUrl;
 		localStorage.setItem(PROFILE_KEY, JSON.stringify(obj));
-		const msg = byId('teacherProfileMsg'); if (msg){ msg.style.display='block'; msg.textContent='Profile saved.'; setTimeout(()=>msg.style.display='none',2500); }
+		if (msgEl){ msgEl.className='profile-msg success'; msgEl.textContent='Profile saved.'; setTimeout(()=>{ msgEl.className='profile-msg'; msgEl.textContent=''; },2500); }
+		return true;
 	}
 
 	document.addEventListener('DOMContentLoaded', ()=>{
 		if (!byId('teacherProfileForm')) return;
 		loadProfile();
 		const avatarInput = byId('teacherAvatar');
+		const avatarPreview = byId('teacherAvatarPreview');
 		if (avatarInput) avatarInput.addEventListener('change', (e)=>{
 			const f = e.target.files && e.target.files[0];
 			if (!f) return;
-			const r = new FileReader(); r.onload = ()=>{ if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`; saveProfile(r.result); }; r.readAsDataURL(f);
+			const r = new FileReader(); r.onload = ()=>{ if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar">`; saveProfile(r.result); }; r.readAsDataURL(f);
 		});
 		byId('saveTeacherProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); saveProfile(); });
-		byId('resetTeacherProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); loadProfile(); if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML=''; });
+		byId('resetTeacherProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML=''; if (byId('teacherProfileForm')) byId('teacherProfileForm').reset(); if (byId('teacherProfileMsg')){ const m = byId('teacherProfileMsg'); m.className='profile-msg success'; m.textContent='Profile reset.'; setTimeout(()=>{ m.className='profile-msg'; m.textContent=''; },2000);} });
 	});
 })();

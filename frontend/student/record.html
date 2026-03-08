@@ -14,13 +14,13 @@
     <div class="logo">ScoreSafe</div>
     <div class="hamburger" id="hamburger">&#9776;</div>
     <nav>
-      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-      <a class="active" href="record.html"><i class="fas fa-chart-line"></i> Record</a>
-      <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt icon-label"></i> Dashboard</a>
+      <a class="active" href="record.html"><i class="fas fa-chart-line icon-label"></i> Record</a>
+      <a href="profile.html"><i class="fas fa-user icon-label"></i> Profile</a>
+      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt icon-label"></i> Sign out</a>
     </nav>
     <div class="header-actions">
-      <a href="#" class="btn outline logout-btn" title="Logout"><i class="fas fa-sign-out-alt"></i> <span class="logout-label">Sign out</span></a>
+      <a href="#" class="btn outline logout-btn" title="Logout"><i class="fas fa-sign-out-alt icon-label"></i> <span class="logout-label">Sign out</span></a>
     </div>
   </div>
 </header>
@@ -32,8 +32,8 @@
     <div class="table-header">
       <h3>All Scores & Papers</h3>
       <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <input type="text" id="recordsSearch" placeholder="Search by subject or category...">
+        <input type="text" id="recordsSearch">
+        <button type="button" class="search-btn" aria-label="Search"><i class="fas fa-search search-icon"></i></button>
       </div>
     </div>
     <div class="table-wrapper">
@@ -41,14 +41,15 @@
         <thead>
           <tr>
             <th>Subject</th>
-            <th>Score</th>
+            <th>Total Score</th>
+            <th>Total Item</th>
             <th>Paper</th>
             <th>Category</th>
             <th>Date</th>
           </tr>
         </thead>
         <tbody>
-          <tr class="empty-row"><td colspan="5">No records yet</td></tr>
+          <tr class="empty-row"><td colspan="6">No records yet</td></tr>
         </tbody>
       </table>
     </div>

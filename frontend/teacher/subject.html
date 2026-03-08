@@ -33,7 +33,7 @@
   <section class="card">
     <form id="addSubjectForm">
       <div class="form-group">
-        <label for="subjectName">Subject Name</label>
+        <label for="subjectName"><i class="fas fa-book icon-label"></i> Subject Name</label>
         <input type="text" id="subjectName">
       </div>
       <button type="submit" class="btn"><i class="fas fa-plus"></i> Add Subject</button>
@@ -45,8 +45,8 @@
     <div class="table-header">
       <h3>Added Subjects</h3>
       <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <input class="table-search" data-table="#subjectsTable" type="text">
+        <input type="text" id="searchInput" class="table-search" data-table="#subjectsTable">
+        <button type="button" class="search-btn" aria-label="Search"><i class="fas fa-search search-icon"></i></button>
       </div>
     </div>
     <div class="table-wrapper">

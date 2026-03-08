@@ -33,20 +33,20 @@
   <section class="card">
     <form id="recordScoreForm">
       <div class="form-group">
-        <label for="studentSelect">Student</label>
+        <label for="studentSelect"><i class="fas fa-user-graduate icon-label"></i> Student</label>
         <select id="studentSelect" required>
           <option value="">-- Select Student --</option>
         </select>
       </div>
 
       <div class="form-group">
-        <label for="subjectSelect">Subject</label>
+        <label for="subjectSelect"><i class="fas fa-book icon-label"></i> Subject</label>
         <select id="subjectSelect" required>
           <option value="">-- Select Subject --</option>
         </select>
       </div>
       <div class="form-group">
-        <label for="categorySelect">Category</label>
+        <label for="categorySelect"><i class="fas fa-layer-group icon-label"></i> Category</label>
         <select id="categorySelect" required>
           <option value="">-- Select Category --</option>
           <option value="Performance">Performance</option>
@@ -58,17 +58,17 @@
       </div>
 
       <div class="form-group">
-        <label for="totalItemsInput">Total Item</label>
+        <label for="totalItemsInput"><i class="fas fa-list-ol icon-label"></i> Total Item</label>
         <input type="number" id="totalItemsInput" min="0">
       </div>
 
       <div class="form-group">
-        <label for="score">Total Score</label>
+        <label for="score"><i class="fas fa-star icon-label"></i> Total Score</label>
         <input type="number" id="score" min="0" max="100" required>
       </div>
 
       <div class="form-group">
-        <label for="paperFile">Upload Paper</label>
+        <label for="paperFile"><i class="fas fa-file-upload icon-label"></i> Upload Paper</label>
         <input type="file" id="paperFile" accept=".jpg,.jpeg,.png,.gif,.doc,.docx,.pdf,.ppt,.pptx">
       </div>
 
@@ -81,8 +81,8 @@
     <div class="table-header">
       <h3>Recorded Scores</h3>
       <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
-        <input id="searchInput" class="table-search" data-table="#scoresTable" type="text">
+           <input type="text" id="searchInput" class="table-search" data-table="#scoresTable" type="text">
+           <button type="button" class="search-btn" aria-label="Search"><i class="fas fa-search search-icon"></i></button>
       </div>
     </div>
     <div class="table-wrapper">
@@ -91,8 +91,8 @@
           <tr>
             <th>Student</th>
             <th>Subject</th>
-            <th>Total Item</th>
             <th>Total Score</th>
+            <th>Total Item</th>
             <th>Paper</th>
             <th>Category</th>
             <th>Date</th>

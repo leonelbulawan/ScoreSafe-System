@@ -17,32 +17,34 @@
 
         <form id="registerForm">
           <div class="form-group">
-            <label for="name">Full name</label>
+            <label for="name"><i class="fas fa-user icon-label"></i> Full name</label>
             <input type="text" id="name" name="name" required>
           </div>
 
           <div class="form-group">
-            <label for="email">Email</label>
+            <label for="email"><i class="fas fa-envelope icon-label"></i> Email</label>
             <input type="email" id="email" name="email" required>
           </div>
 
-          <div class="form-group">
-            <label for="password">Password</label>
+          <div class="form-group" style="position:relative">
+            <label for="password"><i class="fas fa-lock icon-label"></i> Password</label>
             <input type="password" id="password" name="password" required>
           </div>
 
-          <div class="form-group">
-            <label for="confirmPassword">Confirm password</label>
+          <div class="form-group" style="position:relative">
+            <label for="confirmPassword"><i class="fas fa-lock icon-label"></i> Confirm password</label>
             <input type="password" id="confirmPassword" name="confirmPassword" required>
           </div>
 
           <div class="form-group">
-            <label for="role">Role</label>
+            <label for="role"><i class="fas fa-user-tag icon-label"></i> Role</label>
             <select id="role" name="role">
               <option value="teacher">Teacher</option>
               <option value="student">Student</option>
             </select>
           </div>
+
+          <div style="margin-top:6px;margin-bottom:8px"><span id="registerMsg"></span></div>
 
           <button type="submit" class="btn-primary"><i class="fas fa-user-plus"></i> Sign Up</button>
         </form>

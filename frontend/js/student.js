@@ -18,6 +18,8 @@
 
 	function renderStudentDashboard(){
 		const email = getCurrentStudentEmail();
+		// remove any unwanted sample records first
+		cleanSampleRecords();
 		const records = read(RECORDS_KEY).filter(r => !email || r.studentEmail === email);
 		const subjects = new Set(records.map(r => r.subject));
 		const totalScoresEl = byId('studentTotalScores');
@@ -30,30 +32,35 @@
 		const tbody = table.querySelector('tbody');
 		tbody.innerHTML = '';
 		if (!records.length){
-			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="5">No records yet</td>'; tbody.appendChild(tr); return;
+			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
 		}
 		records.slice().reverse().forEach(r => {
 			const tr = document.createElement('tr');
 			const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-			tr.innerHTML = `<td>${r.subject}</td><td>${r.score || ''}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
+			const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
+			const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+			tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
 			tbody.appendChild(tr);
 		});
 	}
 
 	function renderRecordsPage(){
 		const email = getCurrentStudentEmail();
+		cleanSampleRecords();
 		const records = read(RECORDS_KEY).filter(r => !email || r.studentEmail === email);
 		const table = byId('myRecordsTable');
 		if (!table) return;
 		const tbody = table.querySelector('tbody');
 		tbody.innerHTML = '';
 		if (!records.length){
-			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="5">No records yet</td>'; tbody.appendChild(tr); return;
+			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
 		}
 		records.slice().reverse().forEach(r => {
 			const tr = document.createElement('tr');
 			const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-			tr.innerHTML = `<td>${r.subject}</td><td>${r.score || ''}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
+			const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
+			const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+			tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
 			tbody.appendChild(tr);
 		});
 	}
@@ -137,6 +144,26 @@
 	init();
 })();
 
+// remove known sample record(s) that should not appear in student views
+function cleanSampleRecords(){
+	try{
+		const records = JSON.parse(localStorage.getItem('scoresafe_records') || '[]');
+		const filtered = records.filter(r => {
+			// filter out example: Subject 'English', score 4, category 'Performance'
+			if (!r) return true;
+			if ((r.subject === 'English' || (r.subject && r.subject.toString().toLowerCase() === 'english'))
+				&& Number(r.score) === 4
+				&& (r.category === 'Performance' || (r.category && r.category.toString().toLowerCase() === 'performance'))){
+				return false; // exclude
+			}
+			return true;
+		});
+		if (filtered.length !== records.length){
+			localStorage.setItem('scoresafe_records', JSON.stringify(filtered));
+		}
+	}catch(e){ console.warn('cleanSampleRecords error', e); }
+}
+
 // Profile save/load for student page
 (function(){
 	const PROFILE_KEY = 'scoresafe_student_profile';
@@ -157,24 +184,36 @@
 			email: (byId('studentEmail') && byId('studentEmail').value) || '',
 			bio: (byId('studentBio') && byId('studentBio').value) || ''
 		};
+		// basic validation
+		const msgEl = byId('studentProfileMsg');
+		if (!obj.fullName || !obj.email) {
+			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide your full name and email.'; }
+			return false;
+		}
+		if (obj.email && !/^\S+@\S+\.\S+$/.test(obj.email)){
+			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide a valid email address.'; }
+			return false;
+		}
 		if (dataUrl) obj.avatarDataUrl = dataUrl;
 		// preserve existing avatar if none provided
 		const existing = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
 		if (!obj.avatarDataUrl && existing.avatarDataUrl) obj.avatarDataUrl = existing.avatarDataUrl;
 		localStorage.setItem(PROFILE_KEY, JSON.stringify(obj));
-		const msg = byId('studentProfileMsg'); if (msg){ msg.style.display='block'; msg.textContent='Profile saved.'; setTimeout(()=>msg.style.display='none',2500); }
+		if (byId('studentProfileMsg')){ const m = byId('studentProfileMsg'); m.className='profile-msg success'; m.textContent='Profile saved.'; setTimeout(()=>{ m.className='profile-msg'; m.textContent=''; },2500); }
+		return true;
 	}
 
 	document.addEventListener('DOMContentLoaded', ()=>{
 		if (!byId('studentProfileForm')) return;
 		loadProfile();
-		const avatarInput = byId('studentAvatar');
-		if (avatarInput) avatarInput.addEventListener('change', (e)=>{
-			const f = e.target.files && e.target.files[0];
-			if (!f) return;
-			const r = new FileReader(); r.onload = ()=>{ if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`; saveProfile(r.result); }; r.readAsDataURL(f);
-		});
-		byId('saveStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); saveProfile(); });
-		byId('resetStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); loadProfile(); if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML=''; });
+			const avatarInput = byId('studentAvatar');
+			const avatarPreview = byId('studentAvatarPreview');
+			if (avatarInput) avatarInput.addEventListener('change', (e)=>{
+				const f = e.target.files && e.target.files[0];
+				if (!f) return;
+				const r = new FileReader(); r.onload = ()=>{ if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar">`; saveProfile(r.result); }; r.readAsDataURL(f);
+			});
+			byId('saveStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); saveProfile(); });
+			byId('resetStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML=''; if (byId('studentProfileForm')) byId('studentProfileForm').reset(); if (byId('studentProfileMsg')){ const m = byId('studentProfileMsg'); m.className='profile-msg success'; m.textContent='Profile reset.'; setTimeout(()=>{ m.className='profile-msg'; m.textContent=''; },2000);} });
 	});
 })();
