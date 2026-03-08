@@ -28,6 +28,50 @@
 </header>
 
 <main class="container">
+  <section class="card">
+    <div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:0 0 240px;">
+        <div style="text-align:center">
+          <div id="teacherAvatarPreview" style="width:180px;height:180px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;margin:auto;font-size:40px;color:#6b7280;overflow:hidden;border:2px solid var(--primary-color)"></div>
+        </div>
+      </div>
+
+      <div style="flex:1;min-width:320px">
+        
+
+        <form id="teacherProfileForm">
+          <div class="form-group">
+            <label for="teacherFullName">Full name</label>
+            <input id="teacherFullName" type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label for="teacherEmail">Email</label>
+            <input id="teacherEmail" type="email"/>
+          </div>
+
+          
+
+          <div class="form-group">
+            <label for="teacherBio">Professional summary</label>
+            <input id="teacherBio" type="text"/>
+          </div>
+
+          <div class="form-group">
+            <label for="teacherAvatar">Profile photo</label>
+            <input id="teacherAvatar" type="file" accept="image/*" />
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:8px">
+            <button class="btn" id="saveTeacherProfile"><i class="fas fa-save" style="margin-right:8px"></i>Save</button>
+            <button type="button" class="btn outline" id="resetTeacherProfile"><i class="fas fa-rotate-left" style="margin-right:8px"></i>Reset</button>
+          </div>
+          <p id="teacherProfileMsg" style="margin-top:12px;color:#0f766e;font-weight:600;display:none"></p>
+        </form>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <footer class="site-footer">

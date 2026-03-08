@@ -439,3 +439,46 @@
 	});
 
 })();
+
+// Profile save/load for teacher page
+(function(){
+	const PROFILE_KEY = 'scoresafe_teacher_profile';
+	function byId(id){ return document.getElementById(id); }
+
+	function loadProfile(){
+		const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+		if (!Object.keys(p).length) return;
+		if (byId('teacherFullName')) byId('teacherFullName').value = p.fullName || '';
+		if (byId('teacherEmail')) byId('teacherEmail').value = p.email || '';
+		// department/phone fields were removed from the form; ignore if absent
+		if (byId('teacherBio')) byId('teacherBio').value = p.bio || '';
+		if (p.avatarDataUrl && byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+	}
+
+	function saveProfile(dataUrl){
+		const obj = {
+			fullName: (byId('teacherFullName') && byId('teacherFullName').value) || '',
+			email: (byId('teacherEmail') && byId('teacherEmail').value) || '',
+			// department/phone removed from form
+			bio: (byId('teacherBio') && byId('teacherBio').value) || ''
+		};
+		if (dataUrl) obj.avatarDataUrl = dataUrl;
+		const existing = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+		if (!obj.avatarDataUrl && existing.avatarDataUrl) obj.avatarDataUrl = existing.avatarDataUrl;
+		localStorage.setItem(PROFILE_KEY, JSON.stringify(obj));
+		const msg = byId('teacherProfileMsg'); if (msg){ msg.style.display='block'; msg.textContent='Profile saved.'; setTimeout(()=>msg.style.display='none',2500); }
+	}
+
+	document.addEventListener('DOMContentLoaded', ()=>{
+		if (!byId('teacherProfileForm')) return;
+		loadProfile();
+		const avatarInput = byId('teacherAvatar');
+		if (avatarInput) avatarInput.addEventListener('change', (e)=>{
+			const f = e.target.files && e.target.files[0];
+			if (!f) return;
+			const r = new FileReader(); r.onload = ()=>{ if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`; saveProfile(r.result); }; r.readAsDataURL(f);
+		});
+		byId('saveTeacherProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); saveProfile(); });
+		byId('resetTeacherProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); loadProfile(); if (byId('teacherAvatarPreview')) byId('teacherAvatarPreview').innerHTML=''; });
+	});
+})();
