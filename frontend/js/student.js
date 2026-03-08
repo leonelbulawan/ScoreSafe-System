@@ -136,3 +136,45 @@
 
 	init();
 })();
+
+// Profile save/load for student page
+(function(){
+	const PROFILE_KEY = 'scoresafe_student_profile';
+	function byId(id){ return document.getElementById(id); }
+
+	function loadProfile(){
+		const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+		if (!Object.keys(p).length) return;
+		if (byId('studentFullName')) byId('studentFullName').value = p.fullName || '';
+		if (byId('studentEmail')) byId('studentEmail').value = p.email || '';
+		if (byId('studentBio')) byId('studentBio').value = p.bio || '';
+		if (p.avatarDataUrl && byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+	}
+
+	function saveProfile(dataUrl){
+		const obj = {
+			fullName: (byId('studentFullName') && byId('studentFullName').value) || '',
+			email: (byId('studentEmail') && byId('studentEmail').value) || '',
+			bio: (byId('studentBio') && byId('studentBio').value) || ''
+		};
+		if (dataUrl) obj.avatarDataUrl = dataUrl;
+		// preserve existing avatar if none provided
+		const existing = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
+		if (!obj.avatarDataUrl && existing.avatarDataUrl) obj.avatarDataUrl = existing.avatarDataUrl;
+		localStorage.setItem(PROFILE_KEY, JSON.stringify(obj));
+		const msg = byId('studentProfileMsg'); if (msg){ msg.style.display='block'; msg.textContent='Profile saved.'; setTimeout(()=>msg.style.display='none',2500); }
+	}
+
+	document.addEventListener('DOMContentLoaded', ()=>{
+		if (!byId('studentProfileForm')) return;
+		loadProfile();
+		const avatarInput = byId('studentAvatar');
+		if (avatarInput) avatarInput.addEventListener('change', (e)=>{
+			const f = e.target.files && e.target.files[0];
+			if (!f) return;
+			const r = new FileReader(); r.onload = ()=>{ if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${r.result}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`; saveProfile(r.result); }; r.readAsDataURL(f);
+		});
+		byId('saveStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); saveProfile(); });
+		byId('resetStudentProfile').addEventListener('click', (ev)=>{ ev.preventDefault(); localStorage.removeItem(PROFILE_KEY); loadProfile(); if (byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML=''; });
+	});
+})();
