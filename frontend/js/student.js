@@ -1,10 +1,6 @@
 // Student page JS - reads records and displays student-facing views
 (function(){
-	const STUDENTS_KEY = 'scoresafe_students';
-	const SUBJECTS_KEY = 'scoresafe_subjects';
-	const RECORDS_KEY = 'scoresafe_records';
-
-	const read = (k) => JSON.parse(localStorage.getItem(k) || '[]');
+	// ...existing code...
 	function byId(id){ return document.getElementById(id); }
 
 	function getCurrentStudentEmail(){
@@ -18,51 +14,55 @@
 
 	function renderStudentDashboard(){
 		const email = getCurrentStudentEmail();
-		// remove any unwanted sample records first
-		cleanSampleRecords();
-		const records = read(RECORDS_KEY).filter(r => !email || r.studentEmail === email);
-		const subjects = new Set(records.map(r => r.subject));
-		const totalScoresEl = byId('studentTotalScores');
-		const totalSubjectsEl = byId('studentTotalSubjects');
-		if (totalScoresEl) totalScoresEl.textContent = records.length;
-		if (totalSubjectsEl) totalSubjectsEl.textContent = subjects.size;
-		// render table
-		const table = byId('studentScoresTable');
-		if (!table) return;
-		const tbody = table.querySelector('tbody');
-		tbody.innerHTML = '';
-		if (!records.length){
-			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
-		}
-		records.slice().reverse().forEach(r => {
-			const tr = document.createElement('tr');
-			const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-			const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
-			const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
-			tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
-			tbody.appendChild(tr);
-		});
+		fetch('/api/scores/get-records')
+			.then(res => res.json())
+			.then(records => {
+				const filtered = records.filter(r => !email || r.studentEmail === email);
+				const subjects = new Set(filtered.map(r => r.subject));
+				const totalScoresEl = byId('studentTotalScores');
+				const totalSubjectsEl = byId('studentTotalSubjects');
+				if (totalScoresEl) totalScoresEl.textContent = filtered.length;
+				if (totalSubjectsEl) totalSubjectsEl.textContent = subjects.size;
+				const table = byId('studentScoresTable');
+				if (!table) return;
+				const tbody = table.querySelector('tbody');
+				tbody.innerHTML = '';
+				if (!filtered.length){
+					const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
+				}
+				filtered.slice().reverse().forEach(r => {
+					const tr = document.createElement('tr');
+					const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
+					const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
+					const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+					tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
+					tbody.appendChild(tr);
+				});
+			});
 	}
 
 	function renderRecordsPage(){
 		const email = getCurrentStudentEmail();
-		cleanSampleRecords();
-		const records = read(RECORDS_KEY).filter(r => !email || r.studentEmail === email);
-		const table = byId('myRecordsTable');
-		if (!table) return;
-		const tbody = table.querySelector('tbody');
-		tbody.innerHTML = '';
-		if (!records.length){
-			const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
-		}
-		records.slice().reverse().forEach(r => {
-			const tr = document.createElement('tr');
-			const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-			const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
-			const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
-			tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
-			tbody.appendChild(tr);
-		});
+		fetch('/api/scores/get-records')
+			.then(res => res.json())
+			.then(records => {
+				const filtered = records.filter(r => !email || r.studentEmail === email);
+				const table = byId('myRecordsTable');
+				if (!table) return;
+				const tbody = table.querySelector('tbody');
+				tbody.innerHTML = '';
+				if (!filtered.length){
+					const tr = document.createElement('tr'); tr.className='empty-row'; tr.innerHTML = '<td colspan="6">No records yet</td>'; tbody.appendChild(tr); return;
+				}
+				filtered.slice().reverse().forEach(r => {
+					const tr = document.createElement('tr');
+					const paper = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
+					const totalScoreDisplay = (r.score !== undefined && r.score !== null) ? r.score : '';
+					const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
+					tr.innerHTML = `<td>${r.subject}</td><td>${totalScoreDisplay}</td><td>${totalItemsDisplay}</td><td>${paper}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td>`;
+					tbody.appendChild(tr);
+				});
+			});
 	}
 
 	function init(){
@@ -147,20 +147,21 @@
 // remove known sample record(s) that should not appear in student views
 function cleanSampleRecords(){
 	try{
-		const records = JSON.parse(localStorage.getItem('scoresafe_records') || '[]');
-		const filtered = records.filter(r => {
-			// filter out example: Subject 'English', score 4, category 'Performance'
-			if (!r) return true;
-			if ((r.subject === 'English' || (r.subject && r.subject.toString().toLowerCase() === 'english'))
-				&& Number(r.score) === 4
-				&& (r.category === 'Performance' || (r.category && r.category.toString().toLowerCase() === 'performance'))){
-				return false; // exclude
-			}
-			return true;
-		});
-		if (filtered.length !== records.length){
-			localStorage.setItem('scoresafe_records', JSON.stringify(filtered));
-		}
+		fetch('/api/scores/get-records')
+			.then(res => res.json())
+			.then(records => {
+				const filtered = records.filter(r => {
+					if (!r) return true;
+					if ((r.subject === 'English' || (r.subject && r.subject.toString().toLowerCase() === 'english'))
+						&& Number(r.score) === 4
+						&& (r.category === 'Performance' || (r.category && r.category.toString().toLowerCase() === 'performance'))){
+						return false;
+					}
+					return true;
+				});
+				// Optionally, update UI or state with filtered records
+			})
+			.catch(e => { console.warn('cleanSampleRecords error', e); });
 	}catch(e){ console.warn('cleanSampleRecords error', e); }
 }
 
@@ -170,36 +171,45 @@ function cleanSampleRecords(){
 	function byId(id){ return document.getElementById(id); }
 
 	function loadProfile(){
-		const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
-		if (!Object.keys(p).length) return;
-		if (byId('studentFullName')) byId('studentFullName').value = p.fullName || '';
-		if (byId('studentEmail')) byId('studentEmail').value = p.email || '';
-		if (byId('studentBio')) byId('studentBio').value = p.bio || '';
-		if (p.avatarDataUrl && byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+		fetch('/api/auth/get-profile')
+			.then(res => res.json())
+			.then(p => {
+				if (!Object.keys(p).length) return;
+				if (byId('studentFullName')) byId('studentFullName').value = p.fullName || '';
+				if (byId('studentEmail')) byId('studentEmail').value = p.email || '';
+				if (byId('studentBio')) byId('studentBio').value = p.bio || '';
+				if (p.avatarDataUrl && byId('studentAvatarPreview')) byId('studentAvatarPreview').innerHTML = `<img src="${p.avatarDataUrl}" alt="avatar" style="width:100%;height:100%;object-fit:cover">`;
+			});
 	}
 
 	function saveProfile(dataUrl){
 		const obj = {
-			fullName: (byId('studentFullName') && byId('studentFullName').value) || '',
-			email: (byId('studentEmail') && byId('studentEmail').value) || '',
-			bio: (byId('studentBio') && byId('studentBio').value) || ''
+				fullName: (byId('studentFullName') && byId('studentFullName').value) || '',
+				email: (byId('studentEmail') && byId('studentEmail').value) || '',
+				bio: (byId('studentBio') && byId('studentBio').value) || ''
 		};
-		// basic validation
 		const msgEl = byId('studentProfileMsg');
 		if (!obj.fullName || !obj.email) {
-			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide your full name and email.'; }
 			return false;
 		}
 		if (obj.email && !/^\S+@\S+\.\S+$/.test(obj.email)){
-			if (msgEl){ msgEl.className='profile-msg error'; msgEl.textContent='Please provide a valid email address.'; }
 			return false;
 		}
 		if (dataUrl) obj.avatarDataUrl = dataUrl;
 		// preserve existing avatar if none provided
-		const existing = JSON.parse(localStorage.getItem(PROFILE_KEY) || '{}');
-		if (!obj.avatarDataUrl && existing.avatarDataUrl) obj.avatarDataUrl = existing.avatarDataUrl;
-		localStorage.setItem(PROFILE_KEY, JSON.stringify(obj));
-		if (byId('studentProfileMsg')){ const m = byId('studentProfileMsg'); m.className='profile-msg success'; m.textContent='Profile saved.'; setTimeout(()=>{ m.className='profile-msg'; m.textContent=''; },2500); }
+		// Optionally fetch existing avatar from backend
+
+		fetch('/api/auth/update-profile', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(obj)
+		})
+			.then(res => res.json())
+			.then(response => {
+				if (response.success) {
+					if (msgEl){ msgEl.className='profile-msg success'; msgEl.textContent='Profile saved.'; setTimeout(()=>{ msgEl.className='profile-msg'; msgEl.textContent=''; },2500); }
+				}
+			});
 		return true;
 	}
 
