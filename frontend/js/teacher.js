@@ -73,25 +73,24 @@
 			const btn = e.target.closest('button[data-action]');
 			if (!btn) return;
 			const action = btn.dataset.action;
-			if (action === 'delete-student') {
+				if (btn.dataset.action === 'delete-record') {
 				const email = btn.dataset.email;
 				let students = read(STUDENTS_KEY);
 				students = students.filter(s => s.email !== email);
 				write(STUDENTS_KEY, students);
-				// also remove related records
+			} else if (btn.dataset.action === 'edit-record') {
 				let records = read(RECORDS_KEY);
 				records = records.filter(r => r.studentEmail !== email);
-				write(RECORDS_KEY, records);
-				render();
-				broadcastUpdate();
-			}
-		});
-
-		render();
-	}
-
-	// Subjects page
-	function initSubjectsPage() {
+				const studentTd = tds[0];
+				const subjectTd = tds[1];
+				const scoreTd = tds[2];
+				const categoryTd = tds[4];
+				const actionsTd = tds[6];
+				const originalStudent = records[realIdx].studentEmail;
+				const originalSubject = records[realIdx].subject;
+				const originalTotalItems = records[realIdx].totalItems || '';
+				const originalScore = records[realIdx].score || '';
+				const originalCategory = records[realIdx].category;
 		const form = byId('addSubjectForm');
 		const table = byId('subjectsTable');
 		const msg = byId('subjectMsg');
@@ -104,30 +103,31 @@
 				const tr = document.createElement('tr');
 				tr.className = 'empty-row';
 				tr.innerHTML = '<td colspan="3">No subjects yet</td>';
-				tbody.appendChild(tr);
-				return;
-			}
-			subjects.forEach((s, idx) => {
-				const tr = document.createElement('tr');
-				tr.innerHTML = `<td>${s}</td><td><button class="btn outline" data-idx="${idx}" data-action="delete-subject">Delete</button></td>`;
+				studentTd.innerHTML = studentSelect;
+				subjectTd.innerHTML = subjectSelect;
+				// combine score and total inputs in same cell
+				scoreTd.innerHTML = `<input type="number" value="${originalScore}" style="width: 60px; margin-right:6px;"> <input type="number" value="${originalTotalItems}" style="width: 80px;" placeholder="Total">`;
+				categoryTd.innerHTML = `<select style="width: 100px; cursor: pointer; appearance: none; background-image: url(&quot;data:image/svg+xml,%3csvg xmlns=&apos;http://www.w3.org/2000/svg&apos; fill=&apos;none&apos; viewBox=&apos;0 0 20 20&apos;%3e%3cpath stroke=&apos;%236b7280&apos; stroke-linecap=&apos;round&apos; stroke-linejoin=&apos;round&apos; stroke-width=&apos;1.5&apos; d=&apos;m6 8 4 4 4-4&apos;/%3e%3c/svg%3e&quot;); background-position: right 12px center; background-repeat: no-repeat; background-size: 16px; padding-right: 40px; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 16px; background-color: #ffffff; color: #1e293b; transition: all 0.2s ease; box-sizing: border-box;"><option value="Performance" ${originalCategory === 'Performance' ? 'selected' : ''}>Performance</option><option value="Activity" ${originalCategory === 'Activity' ? 'selected' : ''}>Activity</option><option value="Quiz" ${originalCategory === 'Quiz' ? 'selected' : ''}>Quiz</option><option value="Recitation" ${originalCategory === 'Recitation' ? 'selected' : ''}>Recitation</option><option value="Examination" ${originalCategory === 'Examination' ? 'selected' : ''}>Examination</option></select>`;
+				actionsTd.innerHTML = `<button class="btn" data-idx="${idx}" data-action="save-edit">Save</button> <button class="btn outline" data-idx="${idx}" data-action="cancel-edit">Cancel</button>`;
 				tbody.appendChild(tr);
 			});
 		}
-
-		if (form) {
-			form.addEventListener('submit', e => {
-				e.preventDefault();
-				const name = byId('subjectName').value.trim();
-				if (!name) return;
-				const subjects = read(SUBJECTS_KEY);
-				if (subjects.includes(name)) { msg.textContent = 'Subject exists.'; return; }
-				subjects.push(name);
-				write(SUBJECTS_KEY, subjects);
-				form.reset();
-				msg.textContent = 'Subject added.';
-				render();
+				const studentSelect = tds[0].querySelector('select');
+				const subjectSelect = tds[1].querySelector('select');
+				const scoreInputs = tds[2].querySelectorAll('input');
+				const scoreInput = scoreInputs[0];
+				const totalItemsInput = scoreInputs[1];
+				const categorySelect = tds[4].querySelector('select');
+				records[realIdx].studentEmail = studentSelect.value;
+				records[realIdx].subject = subjectSelect.value;
+				const totalItemsValEdit = totalItemsInput && totalItemsInput.value ? totalItemsInput.value.trim() : '';
+				if (totalItemsValEdit !== '') records[realIdx].totalItems = Number(totalItemsValEdit);
+				else delete records[realIdx].totalItems;
+				records[realIdx].score = scoreInput && scoreInput.value ? Number(scoreInput.value) : undefined;
+				records[realIdx].category = categorySelect.value;
+				write(RECORDS_KEY, records);
+				renderScoresTables();
 				broadcastUpdate();
-			});
 		}
 
 		table.addEventListener('click', e => {
@@ -186,8 +186,14 @@
 					const student = students.find(s => s.email === r.studentEmail);
 					const studentName = student ? student.name : r.studentEmail;
 					const paperLink = r.paperDataUrl ? `<a class="view-link" href="${r.paperDataUrl}" target="_blank">View</a>` : '';
-					const totalItemsDisplay = (r.totalItems !== undefined && r.totalItems !== null) ? r.totalItems : '';
-					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${totalItemsDisplay}</td><td>${r.score || ''}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
+					// display score, optionally with total items as "score/total"
+					let scoreDisplay = '';
+					if (r.score !== undefined && r.score !== null) {
+						scoreDisplay = r.totalItems ? `${r.score}/${r.totalItems}` : `${r.score}`;
+					} else if (r.totalItems !== undefined && r.totalItems !== null) {
+						scoreDisplay = `/${r.totalItems}`;
+					}
+					tr.innerHTML = `<td>${studentName}</td><td>${r.subject}</td><td>${scoreDisplay}</td><td>${paperLink}</td><td>${r.category}</td><td>${new Date(r.date).toLocaleString()}</td><td><button class="btn outline" data-idx="${idx}" data-action="edit-record">Edit</button> <button class="btn outline" data-idx="${idx}" data-action="delete-record">Delete</button></td>`;
 					tbody.appendChild(tr);
 				});
 			});
