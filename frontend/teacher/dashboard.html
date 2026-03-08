@@ -31,7 +31,7 @@
   <section class="stats-grid">
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="fas fa-file-alt"></i>
+          <i class="fas fa-file-alt icon-label"></i>
       </div>
       <div class="stat-content">
         <p class="stat-label">Total Records</p>
@@ -40,7 +40,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="fas fa-users"></i>
+          <i class="fas fa-users icon-label"></i>
       </div>
       <div class="stat-content">
         <p class="stat-label">Total Students</p>
@@ -49,7 +49,7 @@
     </div>
     <div class="stat-card">
       <div class="stat-icon">
-        <i class="fas fa-book-open"></i>
+          <i class="fas fa-book-open icon-label"></i>
       </div>
       <div class="stat-content">
         <p class="stat-label">Subjects</p>
@@ -63,8 +63,8 @@
     <div class="table-header">
       <h3>Recent Records</h3>
       <div class="search-container">
-        <i class="fas fa-search search-icon"></i>
         <input type="text" id="searchInput" class="table-search" data-table="#scoresTable">
+        <button type="button" class="search-btn" aria-label="Search"><i class="fas fa-search search-icon"></i></button>
       </div>
     </div>
     <div class="table-wrapper">
@@ -73,7 +73,8 @@
           <tr>
             <th>Student</th>
             <th>Subject</th>
-            <th>Score</th>
+            <th>Total Score</th>
+            <th>Total Item</th>
             <th>Paper</th>
             <th>Category</th>
             <th>Date</th>
@@ -81,7 +82,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="empty-row"><td colspan="7">No records yet</td></tr>
+          <tr class="empty-row"><td colspan="8">No records yet</td></tr>
         </tbody>
       </table>
     </div>

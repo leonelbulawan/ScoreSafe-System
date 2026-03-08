@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       if (!email || !password) { show('Please fill in all fields.', 'error-msg'); return; }
+      if (email && !/^\S+@\S+\.\S+$/.test(email)) { show('Please enter a valid email.', 'error-msg'); return; }
 
       try {
         const res = await fetch('/api/auth/login', {
@@ -46,6 +47,8 @@ document.addEventListener('DOMContentLoaded', () => {
         show('Unable to reach server', 'error-msg');
       }
     });
+
+      // No password toggle logic needed; icons are static
   }
 
   if (registerForm) {
@@ -65,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       if (!name || !email || !password) { show('Please fill in all fields.', 'error-msg'); return; }
+      if (email && !/^\S+@\S+\.\S+$/.test(email)) { show('Please enter a valid email.', 'error-msg'); return; }
       if (password.length < 8) { show('Password must be at least 8 characters.', 'error-msg'); return; }
       if (password !== confirmPassword) { show('Passwords do not match.', 'error-msg'); return; }
 
@@ -93,5 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
         show('Unable to reach server', 'error-msg');
       }
     });
+
+    // password visibility toggles for register
+      // No password toggle logic needed; icons are static
   }
 });

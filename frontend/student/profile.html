@@ -28,43 +28,42 @@
 <main class="container">
 
 	<section class="card">
-		<div style="display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap">
-			<div style="flex:0 0 240px;">
-				<div style="text-align:center">
-					<div id="studentAvatarPreview" style="width:180px;height:180px;border-radius:12px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;margin:auto;font-size:40px;color:#6b7280;overflow:hidden;border:2px solid var(--primary-color)"></div>
+		<div class="profile-card">
+			<div class="profile-avatar">
+				<div class="avatar-wrapper" id="studentAvatarPreview">
+					<!-- image inserted by JS -->
 				</div>
 			</div>
 
-			<div style="flex:1;min-width:320px">
+			<div class="profile-info">
 
 				<form id="studentProfileForm">
 					<div class="form-group">
-						<label for="studentFullName">Full name</label>
-						<input id="studentFullName" type="text"/>
+						<label for="studentFullName"><i class="fas fa-user icon-label"></i> Full name</label>
+							<input id="studentFullName" type="text" />
 					</div>
 
 					<div class="form-group">
-						<label for="studentEmail">Email</label>
-						<input id="studentEmail" type="email"/>
-					</div>
-
-
-
-					<div class="form-group">
-						<label for="studentBio">Bio</label>
-						<input id="studentBio" type="text"/>
+						<label for="studentEmail"><i class="fas fa-envelope icon-label"></i> Email</label>
+						<input id="studentEmail" type="email" />
 					</div>
 
 					<div class="form-group">
-						<label for="studentAvatar">Profile photo</label>
+						<label for="studentBio"><i class="fas fa-briefcase icon-label"></i>Bio</label>
+						<input id="studentBio" type="text" />
+					</div>
+
+					<div class="form-group">
+						<label for="studentAvatar"><i class="fas fa-image icon-label"></i> Profile photo</label>
 						<input id="studentAvatar" type="file" accept="image/*" />
 					</div>
 
 					<div style="display:flex;gap:12px;margin-top:8px">
-						<button class="btn" id="saveStudentProfile"><i class="fas fa-save" style="margin-right:8px"></i>Save</button>
-						<button type="button" class="btn outline" id="resetStudentProfile"><i class="fas fa-rotate-left" style="margin-right:8px"></i>Reset</button>
+						<div class="profile-actions">
+							<button class="btn" id="saveStudentProfile"><i class="fas fa-save icon-label"></i> Save</button>
+							<button type="button" class="btn outline" id="resetStudentProfile"><i class="fas fa-rotate-left icon-label"></i> Reset</button>
+						</div>
 					</div>
-					<p id="studentProfileMsg" style="margin-top:12px;color:#0f766e;font-weight:600;display:none"></p>
 				</form>
 			</div>
 		</div>

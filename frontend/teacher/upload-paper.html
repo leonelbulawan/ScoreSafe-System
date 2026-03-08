@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
     <nav>
-      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-      <a href="student.html"><i class="fas fa-user-graduate"></i> Student</a>
-      <a href="subject.html"><i class="fas fa-book"></i> Subject</a>
-      <a href="record-score.html"><i class="fas fa-plus-circle"></i> Record</a>
-      <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-      <a class="active" href="upload-paper.html"><i class="fas fa-file-upload"></i> Upload Paper</a>
-      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt icon-label"></i> Dashboard</a>
+      <a href="student.html"><i class="fas fa-user-graduate icon-label"></i> Student</a>
+      <a href="subject.html"><i class="fas fa-book icon-label"></i> Subject</a>
+      <a href="record-score.html"><i class="fas fa-plus-circle icon-label"></i> Record</a>
+      <a href="profile.html"><i class="fas fa-user icon-label"></i> Profile</a>
+      <a class="active" href="upload-paper.html"><i class="fas fa-file-upload icon-label"></i> Upload Paper</a>
+      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt icon-label"></i> Sign out</a>
     </nav>
 <header class="topbar">
   <div class="container nav-wrapper">
     <div class="logo">ScoreSafe</div>
     <div class="hamburger" id="hamburger">&#9776;</div>
     <nav>
-      <a href="dashboard.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-      <a href="student.html"><i class="fas fa-user-graduate"></i> Student</a>
-      <a href="subject.html"><i class="fas fa-book"></i> Subject</a>
-      <a href="record-score.html"><i class="fas fa-plus-circle"></i> Record Score</a>
-      <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-      <a class="active" href="upload-paper.html"><i class="fas fa-upload"></i> Upload Paper</a>
-      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+      <a href="dashboard.html"><i class="fas fa-tachometer-alt icon-label"></i> Dashboard</a>
+      <a href="student.html"><i class="fas fa-user-graduate icon-label"></i> Student</a>
+      <a href="subject.html"><i class="fas fa-book icon-label"></i> Subject</a>
+      <a href="record-score.html"><i class="fas fa-plus-circle icon-label"></i> Record Score</a>
+      <a href="profile.html"><i class="fas fa-user icon-label"></i> Profile</a>
+      <a class="active" href="upload-paper.html"><i class="fas fa-upload icon-label"></i> Upload Paper</a>
+      <a href="#" class="mobile-only logout-btn"><i class="fas fa-sign-out-alt icon-label"></i> Sign out</a>
     </nav>
     <div class="header-actions">
-      <a href="#" class="btn outline logout-btn"><i class="fas fa-sign-out-alt"></i> <span class="logout-label">Sign out</span></a>
+      <a href="#" class="btn outline logout-btn"><i class="fas fa-sign-out-alt icon-label"></i> <span class="logout-label">Sign out</span></a>
     </div>
   </div>
 </header>
@@ -63,7 +63,7 @@
         <input type="file" id="paperFile" accept=".jpg,.jpeg,.png,.gif,.doc,.docx,.pdf,.ppt,.pptx">
       </div>
 
-      <button type="submit" class="btn"><i class="fas fa-cloud-upload-alt"></i> Upload Paper</button>
+      <button type="submit" class="btn"><i class="fas fa-cloud-upload-alt icon-label"></i> Upload Paper</button>
     </form>
     <p id="uploadMsg"></p>
   </section>
@@ -75,7 +75,8 @@
           <tr>
             <th>Student Email</th>
             <th>Subject</th>
-            <th>Score</th>
+            <th>Total Score</th>
+            <th>Total Item</th>
             <th>Paper</th>
             <th>Category</th>
             <th>Date</th>
@@ -83,7 +84,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr class="empty-row"><td colspan="7">No records yet</td></tr>
+          <tr class="empty-row"><td colspan="8">No records yet</td></tr>
         </tbody>
       </table>
     </div>
