@@ -285,3 +285,19 @@ async function main() {
 }
 
 main();
+
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.getElementById('hamburger');
+    const nav = document.querySelector('nav');
+    if (hamburger && nav) {
+        hamburger.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+        // Optional: close sidebar when clicking outside nav
+        document.addEventListener('click', (e) => {
+            if (nav.classList.contains('active') && !nav.contains(e.target) && e.target !== hamburger) {
+                nav.classList.remove('active');
+            }
+        });
+    }
+});
